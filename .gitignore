@@ -1,0 +1,7 @@
+# iCEcube2 directories
+Pulses-REU_Implmnt/
+*.prj
+*.project
+*.bak
+*.log
+*.tcl
