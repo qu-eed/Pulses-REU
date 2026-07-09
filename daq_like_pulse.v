@@ -1,21 +1,3 @@
-/*
-*
-* DAQ Clock: 700kHz
-* FPGA Clock: 25MHz
-* Pulse Duration: 3us
-* Pulse Gap: 3us
-* Number of Pulses: 3
-* Time after sequence initiation: 20ms
-*
-* FPGA Cycles per DAQ Cycle:
-*       25MHz / 700kHz = 35.7
-* FPGA Cycles in 3us:
-*       25MHz * 3us = 75
-* FPGA Cycles in 20ms:
-*       25MHz * .02s = 500000
-*
-*/
-
 module daq_like_pulse (input i_Clk, i_Switch, output io_PMOD);
 
 wire w_Switch_Debounced;
