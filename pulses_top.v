@@ -24,12 +24,10 @@ wire w_Switch_1_Debounced;
 
 reg [1:0] r_Counts_3us = 0;
 reg [1:0] r_Counts_5ms = 0;
-reg [4:0] r_Counts_PMOD_3 = 0;
 reg [7:0] r_Counts_PMOD_2 = 0;
 reg r_Switch_1_Prev = 0;
 reg r_Enable_3us = 0;
 reg r_Enable_5ms = 0;
-reg r_PMOD_3_Output = 0;
 reg r_PMOD_2_Buff;
 reg r_PMOD_2_Buff_Prev;
 reg r_Pulsing = 0;
@@ -38,14 +36,13 @@ reg r_Clock_Output_3us_Prev;
 reg r_Clock_Output_5ms_Prev;
 
 parameter MAXCOUNTS = 3;
-parameter PMOD_3_HIGH_TIME = 31;
 parameter PMOD_2_MIN_COUNTS = 26;
 parameter PMOD_2_MAX_COUNTS = 255;
 
-debounce_switch button_send_pulse (
+daq_like_pulse switch_1_PMOD_3 (
     .i_Clk (i_Clk),
-    .il_Switch (i_Switch_1),
-    .ol_Switch (w_Switch_1_Debounced));
+    .i_Switch (i_Switch_1),
+    .io_PMOD (io_PMOD_3));
 
 clock clock_3us (
     .il_Clk (i_Clk),
@@ -58,20 +55,6 @@ clock #(.MAXCYCLES(125000)) clock_5ms (
     .ol_Output (w_Clock_Output_5ms));
 
 always @ (posedge i_Clk) begin
-    // Button and PMOD 3 Logic
-    // Sends a pulse that is 32 cycles wide if button is pressed
-    r_Switch_1_Prev <= w_Switch_1_Debounced;
-    if (~w_Switch_1_Debounced & r_Switch_1_Prev) begin
-        r_PMOD_3_Output <= 1;
-        r_Counts_PMOD_3 <= 0;
-    end
-    else if (r_Counts_PMOD_3 == PMOD_3_HIGH_TIME) begin
-        r_Counts_PMOD_3 <= 0;
-        r_PMOD_3_Output <= 0;
-    end
-    else if (r_PMOD_3_Output == 1) begin
-        r_Counts_PMOD_3 <= r_Counts_PMOD_3 + 1;
-    end
     // PMOD 2 Logic
     if (io_PMOD_2) begin
         if (r_Counts_PMOD_2 < PMOD_2_MAX_COUNTS) begin
@@ -119,6 +102,5 @@ always @ (r_Pulsing or w_Clock_Output_3us) begin
 end
 
 assign io_PMOD_1 = r_Output;
-assign io_PMOD_3 = r_PMOD_3_Output;
 
 endmodule
